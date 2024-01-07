@@ -1,0 +1,31 @@
+  dms:
+    image: mailserver/docker-mailserver:latest
+    container_name: arnelify-mail
+    hostname: mail.example.com
+    env_file: ./docker/dms/prod.env
+    volumes:
+      - ./docker/dms/data/mail/:/var/mail/
+      - ./docker/dms/data/state/:/var/mail-state/
+      - ./docker/dms/data/logs/:/var/log/mail/
+      - ./docker/dms/data/config/:/tmp/docker-mailserver/
+      - /etc/letsencrypt/:/etc/letsencrypt
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - "25:25"    # SMTP  (explicit TLS => STARTTLS, Authentication is DISABLED => use port 465/587 instead)
+      - "143:143"  # IMAP4 (explicit TLS => STARTTLS)
+      - "465:465"  # ESMTP (implicit TLS)
+      - "587:587"  # ESMTP (explicit TLS => STARTTLS)
+      - "993:993"  # IMAP4 (implicit TLS)
+    cap_add:
+      - NET_ADMIN
+    # healthcheck:
+    #   test: "ss --listening --tcp | grep -P 'LISTEN.+:smtp' || exit 1"
+    #   timeout: 3s
+    #   retries: 0
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '1'
+    #       memory: 512M
+    stop_grace_period: 1m
+    restart: always

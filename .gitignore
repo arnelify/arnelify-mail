@@ -1,0 +1,19 @@
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# ide's
+**/.atom
+**/.idea
+**/nbproject
+**/.vscode
+
+# docker
+/*.dockerfile
+/*.yml
+
+# misc
+**/.env
+**/.DS_Store
+**/desktop.ini
+**/*.log*
+**/*.sql
+**/*.db
