@@ -1,6 +1,6 @@
 #!/bin/bash
 set -e
-mkdir -p ./build
+mkdir -p ./dist
 mkdir -p ./src
 DOCKER_PATH="$(dirname "$(readlink -f "$0")")/docker"
 DOCKER_COMPOSE_CONTENT="$(cat "$DOCKER_PATH/base.part.yml")"
@@ -84,10 +84,19 @@ fi
 
 
 # COMMAND: BACKUP
-if [ $1 == 'backup' ]; then
-  rm -rf ./build
+if [ "$1" == "backup" ] || [ "$1" == "protected-backup" ]; then
+  mkdir -p ./backups
+  rm -rf ./dist
+  rm -rf ./linux64
   rm -rf ./src/node_modules
-  zip -er "$ROOT_PATH/backup.zip" "$ROOT_PATH"
+  
+  if [ "$1" == "protected-backup" ]; then
+    zip -er "$ROOT_PATH/backups/$ROOT_NAME-$(date +%Y-%m-%d)-protected.zip" "./"
+  else
+    zip -r "$ROOT_PATH/backups/$ROOT_NAME-$(date +%Y-%m-%d).zip" "./"
+  fi
+
+  mkdir -p ./dist
   echo "Done."
   exit 1
 fi
@@ -95,5 +104,5 @@ fi
 
 
 # COMMAND IS MISSING
-echo -e "You need to specify COMMAND like: \n$0 [prod|dev|clean]\n"
+echo -e "You need to specify COMMAND like: \n$0 [prod|dev|backup|protected-backup|clean]\n"
 exit 1
